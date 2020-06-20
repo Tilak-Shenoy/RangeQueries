@@ -30,7 +30,7 @@ for p in range(1,key_length+1):
                 temp.append(temp_word)
     
 end_time=time.time()
-# print("keys ", range_query)
+print("keys ", range_query)
 print("No. of keys ", len(range_query))
 print("time taken for key generation", end_time -start_time)
     

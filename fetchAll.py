@@ -84,12 +84,15 @@ def main():
 		try:
 			
 			c = conn.cursor()
+			fetch_query = "SELECT * FROM Words where word IN ("
 			# print(type(keys[0]))
 			for key in keys:
-				fetch_query = """SELECT * FROM Words where word = ?"""
-				c.execute(fetch_query,(key, ))
-				# print("The results fetched from database 1 for key " + key + " are:")
-				# print(c.fetchall())
+				fetch_query = fetch_query + "'" +key+"'" + "," 
+			fetch_query = fetch_query[:-1] + ")"
+			# print(fetch_query)
+			print(c.execute(fetch_query))
+			print("The results fetched from database 1 for key " + key + " are:")
+			print(c.fetchall())
 			conn.commit()
 			conn.close()
 		except Error as e:
@@ -109,13 +112,15 @@ def main():
 		try:
 			
 			c = conn.cursor()
-			
+			fetch_query = "SELECT * FROM Words where word IN ("
+			# print(type(keys[0]))
 			for key in keys:
-				fetch_query = """SELECT * FROM Words where word = ?"""
-				c.execute(fetch_query,(key, ))
-				# print("The results fetched from database 2 for key " + key + " are:")
-				# print(c.fetchall())
-
+				fetch_query = fetch_query + "'" +key+"'" + "," 
+			fetch_query = fetch_query[:-1] + ")"
+			# print(fetch_query)
+			c.execute(fetch_query)
+			print("The results fetched from database 2 for key " + key + " are:")
+			print(c.fetchall())
 			conn.commit()
 			conn.close()
 		except Error as e:
@@ -134,13 +139,15 @@ def main():
 		try:
 			
 			c = conn.cursor()
-			
+			fetch_query = "SELECT * FROM Words where word IN ("
+			# print(type(keys[0]))
 			for key in keys:
-				fetch_query = """SELECT * FROM Words where word = ?"""
-				c.execute(fetch_query,(key, ))
-				# print("The results fetched from database 3 for key " + key + " are:")
-				# print(c.fetchall())
-
+				fetch_query = fetch_query + "'" +key+"'" + "," 
+			fetch_query = fetch_query[:-1] + ")"
+			# print(fetch_query)
+			c.execute(fetch_query)
+			print("The results fetched from database 3 for key " + key + " are:")
+			print(c.fetchall())
 			conn.commit()
 			conn.close()
 		except Error as e:
@@ -159,13 +166,15 @@ def main():
 		try:
 			
 			c = conn.cursor()
-			
+			fetch_query = "SELECT * FROM Words where word IN ("
+			# print(type(keys[0]))
 			for key in keys:
-				fetch_query = """SELECT * FROM Words where word = ?"""
-				c.execute(fetch_query,(key, ))
-				# print("The results fetched from database 4 for key " + key + " are:")
-				# print(c.fetchall())
-
+				fetch_query = fetch_query + "'" +key+"'" + "," 
+			fetch_query = fetch_query[:-1] + ")"
+			# print(fetch_query)
+			c.execute(fetch_query)
+			print("The results fetched from database 4 for key " + key + " are:")
+			print(c.fetchall())
 			conn.commit()
 			conn.close()
 		except Error as e:
