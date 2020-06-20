@@ -3,8 +3,8 @@ from sqlite3 import Error
 import time
 import threading
 
-def generate_key(word1, word2):
-	key_length=len(word2)
+def generate_key(word1, word2, length):
+	key_length=length
 	start_char=word1
 	end_char=word2
 	alphabets="abcdefghijklmnopqrstuvwxyz"
@@ -87,9 +87,9 @@ def runQuery(database, keys):
 def main():
 	word1 = input("Enter word1: ")
 	word2 = input("Enter word2: ")
-
+	le = int(input("Enter key length: "))
 	#Generate keys for the given input
-	keys = generate_key(word1,word2)
+	keys = generate_key(word1,word2,le)
 	# print("Keys are",keys)
 
 
