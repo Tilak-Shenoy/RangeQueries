@@ -59,7 +59,7 @@ def create_connection(db_file):
 def main():
 	word1 = input("Enter word1: ")
 	word2 = input("Enter word2: ")
-	le = int(input("Enter key lenght: "))
+	le = int(input("Enter key length: "))
 
 	#Generate keys for the given input
 	keys = generate_key(word1,word2,le)
@@ -67,10 +67,10 @@ def main():
 
 
 
-	database0 = r"/Users/gaurav/Documents/coding/adbms/project/pythonsqlite.db"
-	database1 = r"/Users/gaurav/Documents/coding/adbms/project/pythonsqlite1.db"
-	database2 = r"/Users/gaurav/Documents/coding/adbms/project/pythonsqlite2.db"
-	database3 = r"/Users/gaurav/Documents/coding/adbms/project/pythonsqlite3.db"
+	database0 = r"/home/tilak/Dev/RangeQueries/pythonsqlite.db"
+	database1 = r"/home/tilak/Dev/RangeQueries/pythonsqlite1.db"
+	database2 = r"/home/tilak/Dev/RangeQueries/pythonsqlite2.db"
+	database3 = r"/home/tilak/Dev/RangeQueries/pythonsqlite3.db"
 
 
 
@@ -86,11 +86,16 @@ def main():
 			
 			c = conn.cursor()
 			# print(type(keys[0]))
+			retrieved = []
 			for key in keys:
 				fetch_query = """SELECT * FROM Words where word = ?"""
 				c.execute(fetch_query,(key, ))
-				# print("The results fetched from database 1 for key " + key + " are:")
-				# print(c.fetchall())
+				rows = c.fetchall()
+				for row in rows:
+					retrieved.append(row)
+			print("The results fetched from database 0 are:")
+			print(retrieved)
+			print()
 			conn.commit()
 			conn.close()
 		except Error as e:
@@ -111,12 +116,16 @@ def main():
 			
 			c = conn.cursor()
 			
+			retrieved = []
 			for key in keys:
 				fetch_query = """SELECT * FROM Words where word = ?"""
 				c.execute(fetch_query,(key, ))
-				# print("The results fetched from database 2 for key " + key + " are:")
-				# print(c.fetchall())
-
+				rows = c.fetchall()
+				for row in rows:
+					retrieved.append(row)
+			print("The results fetched from database 1 are:")
+			print(retrieved)
+			print()
 			conn.commit()
 			conn.close()
 		except Error as e:
@@ -135,13 +144,16 @@ def main():
 		try:
 			
 			c = conn.cursor()
-			
+			retrieved = []
 			for key in keys:
 				fetch_query = """SELECT * FROM Words where word = ?"""
 				c.execute(fetch_query,(key, ))
-				# print("The results fetched from database 3 for key " + key + " are:")
-				# print(c.fetchall())
-
+				rows = c.fetchall()
+				for row in rows:
+					retrieved.append(row)
+			print("The results fetched from database 2 are:")
+			print(retrieved)
+			print()
 			conn.commit()
 			conn.close()
 		except Error as e:
@@ -161,12 +173,16 @@ def main():
 			
 			c = conn.cursor()
 			
+			retrieved = []
 			for key in keys:
 				fetch_query = """SELECT * FROM Words where word = ?"""
 				c.execute(fetch_query,(key, ))
-				# print("The results fetched from database 4 for key " + key + " are:")
-				# print(c.fetchall())
-
+				rows = c.fetchall()
+				for row in rows:
+					retrieved.append(row)
+			print("The results fetched from database 3 for key are:")
+			print(retrieved)
+			print()
 			conn.commit()
 			conn.close()
 		except Error as e:
