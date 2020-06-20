@@ -1,7 +1,7 @@
 import sqlite3
 from sqlite3 import Error
 import time
-
+import threading
 
 def generate_key(word1, word2):
 	key_length=len(word2)
@@ -56,6 +56,34 @@ def create_connection(db_file):
 	return conn
 
 
+def runQuery(database, keys):
+	conn = create_connection(database)
+	databaseName = database.split("/")
+
+	# create tables
+	if conn is not None:
+		# create projects table
+		# create_table(conn, sql_create_projects_table)
+		try:
+			
+			c = conn.cursor()
+			fetch_query = "SELECT * FROM Words where word IN ("
+			# print(type(keys[0]))
+			for key in keys:
+				fetch_query = fetch_query + "'" +key+"'" + "," 
+			fetch_query = fetch_query[:-1] + ")"
+			# print(fetch_query)
+			print(c.execute(fetch_query))
+			print("The results fetched from" + databaseName[-1] + " for key " + key + " are:")
+			print(c.fetchall())
+			conn.commit()
+			conn.close()
+		except Error as e:
+			print(e)
+	else:
+		print("Error! cannot create the database connection.")
+
+
 def main():
 	word1 = input("Enter word1: ")
 	word2 = input("Enter word2: ")
@@ -75,112 +103,13 @@ def main():
 
 	start_time = time.time()
 	# create a database connection
-	conn = create_connection(database0)
-
-	# create tables
-	if conn is not None:
-		# create projects table
-		# create_table(conn, sql_create_projects_table)
-		try:
-			
-			c = conn.cursor()
-			fetch_query = "SELECT * FROM Words where word IN ("
-			# print(type(keys[0]))
-			for key in keys:
-				fetch_query = fetch_query + "'" +key+"'" + "," 
-			fetch_query = fetch_query[:-1] + ")"
-			# print(fetch_query)
-			print(c.execute(fetch_query))
-			print("The results fetched from database 1 for key " + key + " are:")
-			print(c.fetchall())
-			conn.commit()
-			conn.close()
-		except Error as e:
-			print(e)
-	else:
-		print("Error! cannot create the database connection.")
-
-
-
+	
+	runQuery(database0, keys)
+	runQuery(database1, keys)
+	runQuery(database2, keys)
+	runQuery(database3, keys)
 	# create a database connection
-	conn = create_connection(database1)
 
-	# create tables
-	if conn is not None:
-		# create projects table
-		# create_table(conn, sql_create_projects_table)
-		try:
-			
-			c = conn.cursor()
-			fetch_query = "SELECT * FROM Words where word IN ("
-			# print(type(keys[0]))
-			for key in keys:
-				fetch_query = fetch_query + "'" +key+"'" + "," 
-			fetch_query = fetch_query[:-1] + ")"
-			# print(fetch_query)
-			c.execute(fetch_query)
-			print("The results fetched from database 2 for key " + key + " are:")
-			print(c.fetchall())
-			conn.commit()
-			conn.close()
-		except Error as e:
-			print(e)
-	else:
-		print("Error! cannot create the database connection.")
-
-
-	# create a database connection
-	conn = create_connection(database2)
-
-	# create tables
-	if conn is not None:
-		# create projects table
-		# create_table(conn, sql_create_projects_table)
-		try:
-			
-			c = conn.cursor()
-			fetch_query = "SELECT * FROM Words where word IN ("
-			# print(type(keys[0]))
-			for key in keys:
-				fetch_query = fetch_query + "'" +key+"'" + "," 
-			fetch_query = fetch_query[:-1] + ")"
-			# print(fetch_query)
-			c.execute(fetch_query)
-			print("The results fetched from database 3 for key " + key + " are:")
-			print(c.fetchall())
-			conn.commit()
-			conn.close()
-		except Error as e:
-			print(e)
-	else:
-		print("Error! cannot create the database connection.")
-
-
-	# create a database connection
-	conn = create_connection(database3)
-
-	# create tables
-	if conn is not None:
-		# create projects table
-		# create_table(conn, sql_create_projects_table)
-		try:
-			
-			c = conn.cursor()
-			fetch_query = "SELECT * FROM Words where word IN ("
-			# print(type(keys[0]))
-			for key in keys:
-				fetch_query = fetch_query + "'" +key+"'" + "," 
-			fetch_query = fetch_query[:-1] + ")"
-			# print(fetch_query)
-			c.execute(fetch_query)
-			print("The results fetched from database 4 for key " + key + " are:")
-			print(c.fetchall())
-			conn.commit()
-			conn.close()
-		except Error as e:
-			print(e)
-	else:
-		print("Error! cannot create the database connection.")
 	end_time = time.time()
 
 
