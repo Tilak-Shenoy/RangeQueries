@@ -1,7 +1,6 @@
 import sqlite3
 from sqlite3 import Error
 import time
-import _thread
 import threading
 
 class myThread (threading.Thread):
@@ -43,8 +42,6 @@ def generate_key(word1, word2, length):
 	                temp.append(temp_word)
 	    
 	end_time=time.time()
-	# print("keys ", range_query)
-	# print("No. of keys ", len(range_query))
 	print("time taken for key generation", end_time -start_time)
 	return range_query
     
@@ -114,8 +111,8 @@ def main():
 	start_time = time.time()
 	thread1 = myThread(1, "Thread-1", database0, keys)
 	thread2 = myThread(2, "Thread-2", database1, keys)
-	thread3 = myThread(2, "Thread-2", database1, keys)
-	thread4 = myThread(2, "Thread-2", database1, keys)
+	thread3 = myThread(3, "Thread-3", database2, keys)
+	thread4 = myThread(4, "Thread-4", database3, keys)
 	thread1.start()
 	thread2.start()
 	thread3.start()
