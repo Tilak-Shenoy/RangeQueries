@@ -1,7 +1,19 @@
 import sqlite3
 from sqlite3 import Error
 import time
+import _thread
 import threading
+
+class myThread (threading.Thread):
+	def __init__(self, threadID, name, database, keys):
+		threading.Thread.__init__(self)
+		self.threadID = threadID
+		self.name = name
+		self.database = database
+		self.keys = keys
+	def run(self):
+		runQuery(self.database, self.keys)
+
 
 def generate_key(word1, word2, length):
 	key_length=length
@@ -38,8 +50,6 @@ def generate_key(word1, word2, length):
     
 
 
-
-
 def create_connection(db_file):
 	""" create a database connection to the SQLite database
 		specified by db_file
@@ -74,8 +84,8 @@ def runQuery(database, keys):
 			fetch_query = fetch_query[:-1] + ")"
 			# print(fetch_query)
 			print(c.execute(fetch_query))
-			print("The results fetched from" + databaseName[-1] + " for key " + key + " are:")
-			print(c.fetchall())
+			print("The results fetched from" + databaseName[-1] + " for key " + key + " are:", c.fetchall())
+
 			conn.commit()
 			conn.close()
 		except Error as e:
@@ -102,17 +112,32 @@ def main():
 
 
 	start_time = time.time()
-	# create a database connection
-	
+	thread1 = myThread(1, "Thread-1", database0, keys)
+	thread2 = myThread(2, "Thread-2", database1, keys)
+	thread3 = myThread(2, "Thread-2", database1, keys)
+	thread4 = myThread(2, "Thread-2", database1, keys)
+	thread1.start()
+	thread2.start()
+	thread3.start()
+	thread4.start()
+	thread1.join()
+	thread2.join()
+	thread3.join()
+	thread4.join()
+	end_time = time.time()
+	print("Total Time taken to process the query using multithreading: ", end_time-start_time)
+	start_time = time.time()
 	runQuery(database0, keys)
 	runQuery(database1, keys)
 	runQuery(database2, keys)
 	runQuery(database3, keys)
-	# create a database connection
 
+	# try:
+	#    t1 = _thread.start_new_thread( runQuery, (database0, keys, ) )
+	#    t2 = _thread.start_new_thread( runQuery, (database1, keys, ) )
+	# except:
+	# 	print("Error: unable to start thread")
 	end_time = time.time()
-
-
 	print("Total Time taken to process the query: ", end_time-start_time)
 
 if __name__ == '__main__':
