@@ -1,6 +1,17 @@
 import sqlite3
 from sqlite3 import Error
 import time
+import threading
+
+class myThread (threading.Thread):
+	def __init__(self, threadID, name, database, keys):
+		threading.Thread.__init__(self)
+		self.threadID = threadID
+		self.name = name
+		self.database = database
+		self.keys = keys
+	def run(self):
+		runQuery(self.database, self.keys)
 
 
 def generate_key(word1, word2, length):
@@ -39,7 +50,6 @@ def generate_key(word1, word2, length):
 
 
 
-
 def create_connection(db_file):
 	""" create a database connection to the SQLite database
 		specified by db_file
@@ -56,6 +66,44 @@ def create_connection(db_file):
 	return conn
 
 
+def runQuery(database, keys):
+	conn = create_connection(database)
+	databaseName = database.split("/")
+
+
+	x = databaseName[-1]
+	if x[-4] == 'e':
+		y = '0'
+	else:
+		y = x[-4]
+
+
+	# create tables
+	if conn is not None:
+		# create projects table
+		# create_table(conn, sql_create_projects_table)
+		try:
+			
+			c = conn.cursor()
+			retrieved = []
+			for key in keys:
+				fetch_query = """SELECT * FROM Words where word = ?"""
+				c.execute(fetch_query,(key, ))
+				rows = c.fetchall()
+				for row in rows:
+					retrieved.append(row)
+			print("The results fetched from database "+y+" are:")
+			print(retrieved)
+			print()
+			conn.commit()
+			conn.close()
+		except Error as e:
+			print(e)
+	else:
+		print("Error! cannot create the database connection.")
+
+
+
 def main():
 	word1 = input("Enter word1: ")
 	word2 = input("Enter word2: ")
@@ -66,133 +114,40 @@ def main():
 	# print("Keys are",keys)
 
 
-
 	database0 = r"/home/tilak/Dev/RangeQueries/pythonsqlite.db"
 	database1 = r"/home/tilak/Dev/RangeQueries/pythonsqlite1.db"
 	database2 = r"/home/tilak/Dev/RangeQueries/pythonsqlite2.db"
 	database3 = r"/home/tilak/Dev/RangeQueries/pythonsqlite3.db"
 
-
-
 	start_time = time.time()
-	# create a database connection
-	conn = create_connection(database0)
-
-	# create tables
-	if conn is not None:
-		# create projects table
-		# create_table(conn, sql_create_projects_table)
-		try:
-			
-			c = conn.cursor()
-			# print(type(keys[0]))
-			retrieved = []
-			for key in keys:
-				fetch_query = """SELECT * FROM Words where word = ?"""
-				c.execute(fetch_query,(key, ))
-				rows = c.fetchall()
-				for row in rows:
-					retrieved.append(row)
-			print("The results fetched from database 0 are:")
-			print(retrieved)
-			print()
-			conn.commit()
-			conn.close()
-		except Error as e:
-			print(e)
-	else:
-		print("Error! cannot create the database connection.")
-
-
-
-	# create a database connection
-	conn = create_connection(database1)
-
-	# create tables
-	if conn is not None:
-		# create projects table
-		# create_table(conn, sql_create_projects_table)
-		try:
-			
-			c = conn.cursor()
-			
-			retrieved = []
-			for key in keys:
-				fetch_query = """SELECT * FROM Words where word = ?"""
-				c.execute(fetch_query,(key, ))
-				rows = c.fetchall()
-				for row in rows:
-					retrieved.append(row)
-			print("The results fetched from database 1 are:")
-			print(retrieved)
-			print()
-			conn.commit()
-			conn.close()
-		except Error as e:
-			print(e)
-	else:
-		print("Error! cannot create the database connection.")
-
-
-	# create a database connection
-	conn = create_connection(database2)
-
-	# create tables
-	if conn is not None:
-		# create projects table
-		# create_table(conn, sql_create_projects_table)
-		try:
-			
-			c = conn.cursor()
-			retrieved = []
-			for key in keys:
-				fetch_query = """SELECT * FROM Words where word = ?"""
-				c.execute(fetch_query,(key, ))
-				rows = c.fetchall()
-				for row in rows:
-					retrieved.append(row)
-			print("The results fetched from database 2 are:")
-			print(retrieved)
-			print()
-			conn.commit()
-			conn.close()
-		except Error as e:
-			print(e)
-	else:
-		print("Error! cannot create the database connection.")
-
-
-	# create a database connection
-	conn = create_connection(database3)
-
-	# create tables
-	if conn is not None:
-		# create projects table
-		# create_table(conn, sql_create_projects_table)
-		try:
-			
-			c = conn.cursor()
-			
-			retrieved = []
-			for key in keys:
-				fetch_query = """SELECT * FROM Words where word = ?"""
-				c.execute(fetch_query,(key, ))
-				rows = c.fetchall()
-				for row in rows:
-					retrieved.append(row)
-			print("The results fetched from database 3 for key are:")
-			print(retrieved)
-			print()
-			conn.commit()
-			conn.close()
-		except Error as e:
-			print(e)
-	else:
-		print("Error! cannot create the database connection.")
+	thread1 = myThread(1, "Thread-1", database0, keys)
+	thread2 = myThread(2, "Thread-2", database1, keys)
+	thread3 = myThread(3, "Thread-3", database2, keys)
+	thread4 = myThread(4, "Thread-4", database3, keys)
+	thread1.start()
+	thread2.start()
+	thread3.start()
+	thread4.start()
+	thread1.join()
+	thread2.join()
+	thread3.join()
+	thread4.join()
 	end_time = time.time()
+	print("Total Time taken to process the query using multithreading: ", end_time-start_time)
+	start_time = time.time()
+	runQuery(database0, keys)
+	runQuery(database1, keys)
+	runQuery(database2, keys)
+	runQuery(database3, keys)
 
-
+	# try:
+	#    t1 = _thread.start_new_thread( runQuery, (database0, keys, ) )
+	#    t2 = _thread.start_new_thread( runQuery, (database1, keys, ) )
+	# except:
+	# 	print("Error: unable to start thread")
+	end_time = time.time()
 	print("Total Time taken to process the query: ", end_time-start_time)
+
 
 if __name__ == '__main__':
 	main()
