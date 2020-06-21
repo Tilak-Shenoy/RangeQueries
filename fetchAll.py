@@ -2,6 +2,7 @@ import sqlite3
 from sqlite3 import Error
 import time
 import threading
+import queue
 
 class myThread (threading.Thread):
 	def __init__(self, threadID, name, database, keys):
@@ -11,7 +12,7 @@ class myThread (threading.Thread):
 		self.database = database
 		self.keys = keys
 	def run(self):
-		runQuery(self.database, self.keys)
+		return runQuery(self.database, self.keys)
 
 
 def generate_key(word1, word2, length):
@@ -66,6 +67,8 @@ def create_connection(db_file):
 def runQuery(database, keys):
 	conn = create_connection(database)
 	databaseName = database.split("/")
+	start_time = 0
+	end_time = 0
 
 	# create tables
 	if conn is not None:
@@ -80,8 +83,10 @@ def runQuery(database, keys):
 				fetch_query = fetch_query + "'" +key+"'" + "," 
 			fetch_query = fetch_query[:-1] + ")"
 			# print(fetch_query)
+			start_time = time.time()
 			print(c.execute(fetch_query))
 			print("The results fetched from" + databaseName[-1] + " for key " + key + " are:", c.fetchall())
+			end_time = time.time()
 
 			conn.commit()
 			conn.close()
@@ -89,6 +94,10 @@ def runQuery(database, keys):
 			print(e)
 	else:
 		print("Error! cannot create the database connection.")
+
+	que.put(end_time-start_time)
+
+que = queue.Queue()
 
 
 def main():
@@ -101,14 +110,20 @@ def main():
 
 
 
-	database0 = r"/Users/gaurav/Documents/coding/adbms/project/pythonsqlite.db"
-	database1 = r"/Users/gaurav/Documents/coding/adbms/project/pythonsqlite1.db"
-	database2 = r"/Users/gaurav/Documents/coding/adbms/project/pythonsqlite2.db"
-	database3 = r"/Users/gaurav/Documents/coding/adbms/project/pythonsqlite3.db"
+	# database0 = r"/Users/gaurav/Documents/coding/adbms/project/pythonsqlite.db"
+	# database1 = r"/Users/gaurav/Documents/coding/adbms/project/pythonsqlite1.db"
+	# database2 = r"/Users/gaurav/Documents/coding/adbms/project/pythonsqlite2.db"
+	# database3 = r"/Users/gaurav/Documents/coding/adbms/project/pythonsqlite3.db"
+
+	database0 = r"/home/tilak/Dev/RangeQueries/pythonsqlite.db"
+	database1 = r"/home/tilak/Dev/RangeQueries/pythonsqlite1.db"
+	database2 = r"/home/tilak/Dev/RangeQueries/pythonsqlite2.db"
+	database3 = r"/home/tilak/Dev/RangeQueries/pythonsqlite3.db"
 
 
 
-	start_time = time.time()
+	# start_time = time.time()
+
 	thread1 = myThread(1, "Thread-1", database0, keys)
 	thread2 = myThread(2, "Thread-2", database1, keys)
 	thread3 = myThread(3, "Thread-3", database2, keys)
@@ -121,8 +136,12 @@ def main():
 	thread2.join()
 	thread3.join()
 	thread4.join()
-	end_time = time.time()
-	print("Total Time taken to process the query using multithreading: ", end_time-start_time)
+	mTime = 0
+	for t in range(4):
+		mTime += que.get()
+	# print(que.q())
+	# end_time = time.time()
+	print("Total Time taken to process the query using multithreading: ", mTime)
 	start_time = time.time()
 	runQuery(database0, keys)
 	runQuery(database1, keys)
@@ -135,7 +154,10 @@ def main():
 	# except:
 	# 	print("Error: unable to start thread")
 	end_time = time.time()
-	print("Total Time taken to process the query: ", end_time-start_time)
+	mTime = 0
+	for t in range(4):
+		mTime += que.get()
+	print("Total Time taken to process the query: ", mTime)
 
 if __name__ == '__main__':
 	main()
